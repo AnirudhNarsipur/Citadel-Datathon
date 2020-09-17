@@ -1,6 +1,7 @@
 import pandas as pd
 import statistics as stat
 import math
+import csv
 
 df = pd.read_csv('movie_industry.csv', engine = 'python')
 
@@ -102,5 +103,8 @@ def analyzebycountry():
     print(nationDF)
     return nationDF
 
-analyzebycountry()
-analyzebyregion()
+countries = analyzebycountry()
+regions = analyzebyregion()
+
+countries.to_csv('countrydata.csv')
+regions.to_csv('regiondata.csv')
