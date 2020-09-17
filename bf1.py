@@ -1,6 +1,6 @@
-import csv
 import pandas as pd
 import statistics as stat
+import math
 
 df = pd.read_csv('movie_industry.csv', engine = 'python')
 
@@ -16,7 +16,7 @@ regionnames = ['North America', 'Latin America', 'Europe', 'Asia', 'Africa', 'Mi
 def filterBudgets(blist):
     newlist = []
     for item in blist:
-        if item !== 0.0:
+        if item != 0.0:
             newlist.append(item)
     return newlist
 
@@ -38,43 +38,46 @@ def filter1000votes(dataset):
 
 def sortbyregion(dataset):
     byCountry = sortbycountry(filter1000votes(dataset))
-    nadata = pd.DataFrame()
-    latinadata = pd.DataFrame()
-    eurdata = pd.DataFrame()
-    asiadata = pd.DataFrame()
-    africadata = pd.DataFrame()
-    mideastdata = pd.DataFrame()
-    ausdata = pd.DataFrame()
+    emptyData = {'budget' : [], 'company' : [], 'country' : [], 'director' : [], 'genre' : [], 'gross' : [], 'name' : [], 'rating' :[], 'released' : [], 'runtime' : [], 'score' : [], 'star' : [], 'votes' : [], 'writer' : [], 'year' : []}
+    nadata = pd.DataFrame(emptyData)
+    latinadata = pd.DataFrame(emptyData)
+    eurdata = pd.DataFrame(emptyData)
+    asiadata = pd.DataFrame(emptyData)
+    africadata = pd.DataFrame(emptyData)
+    mideastdata = pd.DataFrame(emptyData)
+    ausdata = pd.DataFrame(emptyData)
     for data in byCountry:
         nation = data.country.unique()[0]
-        if na.contains(nation):
-            nadata = pd.concat(nadata, data)
-        if latina.contains(nation):
-            latinadata = pd.concat(latinadata, data)
-        if eur.contains(nation):
-            eurdata = pd.concat(eurdata, data)
-        if asia.contains(nation):
-            asiadata = pd.concat(asiadata, data)
-        if africa.contains(nation):
-            africadata = pd.concat(africadata, data)
-        if aus.contains(nation):
-            ausdata = pd.concat(ausdata, data)
+        if nation in na:
+            nadata = pd.concat([data, nadata])
+        if nation in latina:
+            latinadata = pd.concat([data, latinadata])
+        if nation in eur:
+            eurdata = pd.concat([data, eurdata])
+        if nation in asia:
+            asiadata = pd.concat([data, asiadata])
+        if nation in africa:
+            africadata = pd.concat([data, africadata])
+        if nation in mideast:
+            mideastdata = pd.concat([data, mideastdata])
+        if nation in aus:
+            ausdata = pd.concat([data, ausdata])
     regList = [nadata, latinadata, eurdata, asiadata, africadata, mideastdata, ausdata]
     return regList
 
 def analyzebyregion():
-    sc = sortbyregion(dataset)
-    data = {'region' : [], 'count' : [], 'meangross' : [], 'meanbudget' : [], 'totalgross' : []}
-
+    sc = sortbyregion(df)
+    data = {'region' : [], 'count' : [], 'meangross' : [], 'meanbudget' : [], 'totalgross' : [], 'meanrating' : []}
     for index, cd in enumerate(sc):
         data['region'].append(regionnames[index])
         data['count'].append(len(cd))
         data['meangross'].append(stat.mean(cd['gross']))
         try:
-            data['meanbudget'].append(stat.mean(filterBudget(cd['budget'])))
+            data['meanbudget'].append(stat.mean(filterBudgets(cd['budget'])))
         except:
             data['meanbudget'].append(math.nan)
-        data['totalgross'].append(stat.sum(cd['gross']))
+        data['totalgross'].append(sum(cd['gross']))
+        data['meanrating'].append(stat.mean(cd['score']))
 
     regDF = pd.DataFrame(data)
     print(regDF)
@@ -82,22 +85,22 @@ def analyzebyregion():
 
 def analyzebycountry():
     sc = sortbycountry(filter1000votes(df))
-    data = {'country' : [], 'count' : [], 'meangross' : [], 'meanbudget' : [], 'totalgross' : []}
+    data = {'country' : [], 'count' : [], 'meangross' : [], 'meanbudget' : [], 'totalgross' : [], 'meanrating' : []}
 
     for cd in sc:
         data['country'].append(cd.country.unique()[0])
         data['count'].append(len(cd))
         data['meangross'].append(stat.mean(cd['gross']))
         try:
-            data['meanbudget'].append(stat.mean(filterBudget(cd['budget'])))
-        except:
+            data['meanbudget'].append(stat.mean(filterBudgets(cd['budget'])))
+        except Exception as e:
             data['meanbudget'].append(math.nan)
-        data['totalgross'].append(stat.sum(cd['gross']))
+        data['totalgross'].append(sum(cd['gross']))
+        data['meanrating'].append(stat.mean(cd['score']))
 
     nationDF = pd.DataFrame(data)
     print(nationDF)
     return nationDF
-
 
 analyzebycountry()
 analyzebyregion()
