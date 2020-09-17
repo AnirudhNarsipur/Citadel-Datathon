@@ -11,6 +11,7 @@ asia = ['Japan', 'Hong Kong', 'China', 'Taiwan', 'India', 'South Korea', 'Thaila
 africa = ['South Africa', 'Kenya']
 mideast = ['Israel', 'Iran', 'Palestine', 'Saudi Arabia']
 aus = ['Australia', 'New Zealand']
+regionnames = ['North America', 'Latin America', 'Europe', 'Asia', 'Africa', 'Middle East', 'Australia']
 
 def filterBudgets(blist):
     newlist = []
@@ -23,7 +24,7 @@ def sortbycountry(dataset):
     byCountryData = dataset.groupby('country')
     countries = dataset.country.unique()
 
-    filmsByCountry= []
+    filmsByCountry = []
 
     for country in countries:
         data = byCountryData.get_group(country)
@@ -35,8 +36,8 @@ def filter1000votes(dataset):
     isReviewed = dataset.loc[dataset['votes'] >= 1000]
     return isReviewed
 
-def sortbycontinent(dataset):
-    byCountry = sortbycountry(filter1000votes(df))
+def sortbyregion(dataset):
+    byCountry = sortbycountry(filter1000votes(dataset))
     nadata = pd.DataFrame()
     latinadata = pd.DataFrame()
     eurdata = pd.DataFrame()
@@ -58,9 +59,27 @@ def sortbycontinent(dataset):
             africadata = pd.concat(africadata, data)
         if aus.contains(nation):
             ausdata = pd.concat(ausdata, data)
-    contList = [nadata, latinadata, eurdata, asiadata, africadata, mideastdata, ausdata]
-    return contList
-    
+    regList = [nadata, latinadata, eurdata, asiadata, africadata, mideastdata, ausdata]
+    return regList
+
+def analyzebyregion():
+    sc = sortbyregion(dataset)
+    data = {'region' : [], 'count' : [], 'meangross' : [], 'meanbudget' : [], 'totalgross' : []}
+
+    for index, cd in enumerate(sc):
+        data['region'].append(regionnames[index])
+        data['count'].append(len(cd))
+        data['meangross'].append(stat.mean(cd['gross']))
+        try:
+            data['meanbudget'].append(stat.mean(filterBudget(cd['budget'])))
+        except:
+            data['meanbudget'].append(math.nan)
+        data['totalgross'].append(stat.sum(cd['gross']))
+
+    regDF = pd.DataFrame(data)
+    print(regDF)
+    return regDF
+
 def analyzebycountry():
     sc = sortbycountry(filter1000votes(df))
     data = {'country' : [], 'count' : [], 'meangross' : [], 'meanbudget' : [], 'totalgross' : []}
@@ -78,3 +97,7 @@ def analyzebycountry():
     nationDF = pd.DataFrame(data)
     print(nationDF)
     return nationDF
+
+
+analyzebycountry()
+analyzebyregion()
