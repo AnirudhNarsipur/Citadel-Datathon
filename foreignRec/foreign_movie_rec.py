@@ -41,5 +41,17 @@ print(recommend(user)) # foreign recs for userId 2182 who never reviewed any for
 # how about for all englishUsers?
 rec = []
 for user in englishUsers:
-    rec.append(recommend(user))
+    if user in user2user_encoded:
+        rec.append(recommend(user))
 
+rec_flat = [i for sublist in rec for i in sublist]
+
+from collections import Counter
+
+rec_count = Counter(rec_flat)
+rec_count = {k: v for k, v in sorted(rec_count.items(), key=lambda item: item[1], reverse = True)}
+
+list(rec_count.items())[:10]
+
+langs = [movies[movies.movieId == i].og_lang.iloc[0] for i in set(rec_flat)]
+len(pd.Series(langs).value_counts())
