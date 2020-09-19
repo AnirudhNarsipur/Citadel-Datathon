@@ -12,9 +12,9 @@ import pickle
 # read in foreign IDs and mappings
 foreignId = pickle.load(open("foreign_movie_ids.pkl", "rb"))
 
-user2user_encoded = pickle.load(open("user2newUser_map", "rb"))
-movie2movie_encoded = pickle.load(open("movie2newmovie_map", "rb"))
-movie_encoded2movie = pickle.load(open("newMovie2movie_map", "rb"))
+user2user_encoded = pickle.load(open("user2newUser_map.pkl", "rb"))
+movie2movie_encoded = pickle.load(open("movie2newmovie_map.pkl", "rb"))
+movie_encoded2movie = pickle.load(open("newMovie2movie_map.pkl", "rb"))
 
 newForeignId = [movie2movie_encoded[i] for i in foreignId if i in movie2movie_encoded]
 
@@ -38,4 +38,8 @@ user = englishUsers[42]
 print(recommend(user)) # foreign recs for userId 2182 who never reviewed any foreign movies
                        # we can look up the foreign movieIds to manually validate our results
 
+# how about for all englishUsers?
+rec = []
+for user in englishUsers:
+    rec.append(recommend(user))
 
