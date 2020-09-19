@@ -10,13 +10,13 @@ import numpy as np
 import pickle
 
 # read in foreign IDs and mappings
-foreignId = pickle.load(open("'foreign_movie_ids.pkl'", "rb"))
+foreignId = pickle.load(open("foreign_movie_ids.pkl", "rb"))
 
 user2user_encoded = pickle.load(open("user2newUser_map", "rb"))
 movie2movie_encoded = pickle.load(open("movie2newmovie_map", "rb"))
 movie_encoded2movie = pickle.load(open("newMovie2movie_map", "rb"))
 
-newForeignID = [movie2movie_encoded[i] for i in foreignId]
+newForeignID = [movie2movie_encoded[i] for i in foreignId if i in movie2movie_encoded]
 
 # read in learned embeddings from Jl
 movie_embedding_learnt = np.load('movie_embedding_learnt.npy')
@@ -28,3 +28,4 @@ def recommend(user_id, number_of_movies=5):
     movies[~newForeignId] = np.NINF
     mids = np.argpartition(movies, -number_of_movies)[-number_of_movies:]
     return [movie_encoded2movie[i] for i in mids]
+
