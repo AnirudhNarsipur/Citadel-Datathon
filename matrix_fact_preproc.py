@@ -252,6 +252,8 @@ eng_sub = eng_ratings.sample(frac = 0.15)
 
 df = pd.concat([foreign_sub, eng_sub])
 
+englishUsersSub = [i for i in englishUsers if i in df.userId]
+
 # create new indices
 user_ids = df["userId"].unique().tolist()
 user2user_encoded = {x: i for i, x in enumerate(user_ids)}
@@ -267,6 +269,7 @@ df["newmovieId"] = df["movieId"].map(movie2movie_encoded)
 df.to_csv("ratings_for_training.csv")
 pickle.dump(foreignId, open('foreign_movie_ids.pkl', 'wb'))
 pickle.dump(englishUsers, open('english_users.pkl', 'wb'))
+pickle.dump(englishUsersSub, open('english_users_sub.pkl', 'wb'))
 
 pickle.dump(user2user_encoded, open('user2newUser_map', 'wb'))
 pickle.dump(userencoded2user, open('newUser2user_map', 'wb'))
