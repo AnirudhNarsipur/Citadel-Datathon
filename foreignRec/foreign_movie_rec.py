@@ -16,7 +16,7 @@ user2user_encoded = pickle.load(open("user2newUser_map", "rb"))
 movie2movie_encoded = pickle.load(open("movie2newmovie_map", "rb"))
 movie_encoded2movie = pickle.load(open("newMovie2movie_map", "rb"))
 
-newForeignID = [movie2movie_encoded[i] for i in foreignId if i in movie2movie_encoded]
+newForeignId = [movie2movie_encoded[i] for i in foreignId if i in movie2movie_encoded]
 
 # read in learned embeddings from Jl
 movie_embedding_learnt = np.load('movie_embedding_learnt.npy')
@@ -25,7 +25,12 @@ user_embedding_learnt = np.load('user_embedding_learnt.npy')
 def recommend(user_id, number_of_movies=5):
     newuserId = user2user_encoded[user_id]
     movies = user_embedding_learnt[newuserId]@movie_embedding_learnt.T
-    movies[~newForeignId] = np.NINF
+    movies[[i for i in range(len(movies)) if i not in foreignId]] = np.NINF
     mids = np.argpartition(movies, -number_of_movies)[-number_of_movies:]
     return [movie_encoded2movie[i] for i in mids]
 
+# e.g. read in set of "englishUsers" (viewers who only reviewed english language movies),
+# pick one at random, and generate best foreign movie recommendations 
+    
+englishUsers = list(pickle.load(open("english_users.pkl", "rb")))
+recommend(englishUsers[42])

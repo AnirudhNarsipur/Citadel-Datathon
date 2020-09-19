@@ -241,7 +241,7 @@ ratingsSub = ratings[(ratings.userId.isin(englishUsers)) | (ratings.movieId.isin
 
 # filter down ratingsSub keeping proportion of foreign vs english
 def foreign_rating(movieId):
-    return movieId in foreignId
+    return movieId in foreignId.values
 
 ratingsSub['foreign_review'] = ratingsSub.movieId.apply(foreign_rating)
 foreign_ratings = ratingsSub[ratingsSub.foreign_review == True]
