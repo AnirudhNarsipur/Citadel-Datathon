@@ -1,4 +1,5 @@
 import pandas as pd
+import pickle
 
 def pickleSave(object, file):
     with open(file, 'wb') as handle:
@@ -39,3 +40,16 @@ for genre in allgen:
     genlistlist.append(genlist)
 
 pickleSave(genlistlist, 'genlistlist.pickle')
+
+pickleSave(allgen, 'allgen.pickle')
+genlistlist = unPickle('genlistlist.pickle')
+
+for index, genre in enumerate(allgen):
+    df[genre] = genlistlist[index]
+
+df = df.apply(pd.to_numeric)
+correlation = df.corr()
+print(correlation)
+
+
+pickleSave(correlation, 'corr.pickle')
